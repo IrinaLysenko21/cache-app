@@ -3,12 +3,14 @@
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
-  padding: 20px 0;
+  padding: 20px 15px;
 }
+
 .title {
   text-align: center;
   color: #1b857f;
 }
+
 .input-field {
   box-sizing: border-box;
   margin-bottom: 20px;

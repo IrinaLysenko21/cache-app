@@ -5,7 +5,6 @@ import "./App.css";
 function App() {
   const [key, setKey] = useState("");
   const [value, setValue] = useState("");
-  const [elemToUpdate, setElemToUpdate] = useState("");
   const [cache, setCache] = useState({});
 
   useEffect(() => {
@@ -25,9 +24,16 @@ function App() {
     target.name === "key" ? setKey(target.value) : setValue(target.value);
   };
 
-  const handleCacheElemSaving = () => {
-    if (elemToUpdate !== "") delete cache[elemToUpdate];
-    const updatedCache = { ...cache, [key]: value };
+  const handleCacheElemSave = () => {
+    if (cache[`+${key}`]) delete cache[`+${key}`];
+    if (cache[key]) delete cache[key];
+
+    const keyToSet = isNaN(+key) ? key : `+${key}`;
+    const updatedCache = { ...cache, [keyToSet]: value };
+
+    if (Object.keys(updatedCache).length > 2)
+      delete updatedCache[Object.keys(updatedCache)[0]];
+
     setCache(updatedCache);
     setKey("");
     setValue("");
@@ -35,12 +41,9 @@ function App() {
 
   const handleCacheElemChange = ({ target }) => {
     const cacheElemToUpdate = target.closest("tr").id;
-    setElemToUpdate(cacheElemToUpdate);
-    setKey(cacheElemToUpdate);
+    setKey(isNaN(+cacheElemToUpdate) ? cacheElemToUpdate : +cacheElemToUpdate);
     setValue(cache[cacheElemToUpdate]);
   };
-
-  console.log(Object.entries(cache));
 
   return (
     <div className="app">
@@ -66,7 +69,7 @@ function App() {
         className={`save-btn ${emptyFieldsLeft ? "disabled-btn" : ""}`}
         type="button"
         disabled={emptyFieldsLeft}
-        onClick={handleCacheElemSaving}
+        onClick={handleCacheElemSave}
       >
         Save
       </button>
@@ -85,7 +88,9 @@ function App() {
                 key={cacheElem[0]}
                 onClick={handleCacheElemChange}
               >
-                <td className="table-cell">{cacheElem[0]}</td>
+                <td className="table-cell">
+                  {isNaN(+cacheElem[0]) ? cacheElem[0] : +cacheElem[0]}
+                </td>
                 <td className="table-cell">{cacheElem[1]}</td>
               </tr>
             ))}
